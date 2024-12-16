@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alocare Memorie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Alocare Memorie</h1>
+        <form id="memory-form">
+            <div class="mb-3">
+                <label for="procese" class="form-label">Procese (separate prin virgulă):</label>
+                <input type="text" id="procese" class="form-control" placeholder="Ex: 15, 30, 5">
+            </div>
+            <div class="mb-3">
+                <label for="blocuri" class="form-label">Blocuri Memorie Libere (separate prin virgulă):</label>
+                <input type="text" id="blocuri" class="form-control" placeholder="Ex: 32, 40, 65">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="trimiteDate()">Calculează</button>
+        </form>
+        <div id="rezultate" class="mt-4">
+            <h3>Rezultate:</h3>
+            <pre id="output" style="background: #e9ecef; padding: 15px; border-radius: 5px;"></pre>
+        </div>
+    </div>
+
+    <script>
+        async function trimiteDate() {
+            const procese = document.getElementById('procese').value.split(',').map(Number);
+            const blocuri = document.getElementById('blocuri').value.split(',').map(Number);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8082/process_memory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ procese, blocuri_libere: blocuri })
+                });
+
+
+                const data = await response.json();
+                document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('output').textContent = 'Eroare: ' + error.message;
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
